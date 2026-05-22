@@ -19,11 +19,26 @@ python app.py
 ```
 
 브라우저에서 표시되는 로컬 주소를 열고 YouTube 링크를 입력하면 됩니다.
+YouTube에서 봇 확인 오류가 나면 브라우저 쿠키를 `cookies.txt`로 내보낸 뒤 앱의 `Optional YouTube cookies.txt`에 업로드하세요.
+
+공개 서비스로 운영할 때는 YouTube URL 대신 사용자가 직접 권리를 가진 오디오 파일을 업로드하게 하는 방식이 더 안정적입니다.
 
 ## CLI 실행
 
 ```powershell
 python mr_maker.py "https://www.youtube.com/watch?v=VIDEO_ID"
+```
+
+쿠키 파일을 사용할 때:
+
+```powershell
+python mr_maker.py "https://www.youtube.com/watch?v=VIDEO_ID" --cookies cookies.txt
+```
+
+로컬 오디오 파일을 사용할 때:
+
+```powershell
+python mr_maker.py --input ".\song.wav"
 ```
 
 ## 참고

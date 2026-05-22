@@ -28,7 +28,7 @@ def _ensure_dirs() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
 
 
-def download_audio(url: str) -> tuple[str, Path]:
+def download_audio(url: str, cookies_file: str | None = None) -> tuple[str, Path]:
     _ensure_dirs()
     output_template = str(DOWNLOAD_DIR / "%(title).180B [%(id)s].%(ext)s")
     options = {
@@ -45,6 +45,8 @@ def download_audio(url: str) -> tuple[str, Path]:
         "quiet": False,
         "restrictfilenames": True,
     }
+    if cookies_file:
+        options["cookiefile"] = cookies_file
 
     with YoutubeDL(options) as ydl:
         info = ydl.extract_info(url, download=True)
@@ -82,19 +84,44 @@ def separate_vocals(audio_path: Path, model: str = "htdemucs") -> Path:
     return final_path
 
 
-def make_mr(url: str, model: str = "htdemucs") -> MrResult:
-    title, audio_path = download_audio(url)
+def prepare_uploaded_audio(upload_path: str) -> tuple[str, Path]:
+    _ensure_dirs()
+    source = Path(upload_path)
+    if not source.exists():
+        raise FileNotFoundError(f"Uploaded audio was not found: {source}")
+
+    target = DOWNLOAD_DIR / source.name
+    if source.resolve() != target.resolve():
+        shutil.copy2(source, target)
+    return target.stem, target
+
+
+def make_mr(
+    url: str | None = None,
+    model: str = "htdemucs",
+    cookies_file: str | None = None,
+    upload_path: str | None = None,
+) -> MrResult:
+    if upload_path:
+        title, audio_path = prepare_uploaded_audio(upload_path)
+    elif url:
+        title, audio_path = download_audio(url, cookies_file=cookies_file)
+    else:
+        raise ValueError("Provide a YouTube URL or upload an audio file.")
+
     instrumental = separate_vocals(audio_path, model=model)
     return MrResult(title=title, source_audio=audio_path, instrumental=instrumental)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Create MR/instrumental audio from a YouTube URL.")
-    parser.add_argument("url", help="YouTube video URL")
+    parser.add_argument("url", nargs="?", help="YouTube video URL")
+    parser.add_argument("--cookies", help="Path to a Netscape cookies.txt file for yt-dlp")
+    parser.add_argument("--input", help="Local audio file to process instead of a YouTube URL")
     parser.add_argument("--model", default="htdemucs", help="Demucs model name")
     args = parser.parse_args()
 
-    result = make_mr(args.url, model=args.model)
+    result = make_mr(args.url, model=args.model, cookies_file=args.cookies, upload_path=args.input)
     print(f"Title: {result.title}")
     print(f"Source audio: {result.source_audio}")
     print(f"MR file: {result.instrumental}")
