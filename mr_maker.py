@@ -36,8 +36,8 @@ def download_audio(
     _ensure_dirs()
     output_template = str(DOWNLOAD_DIR / "%(title).180B [%(id)s].%(ext)s")
     options = {
-        "format": "ba/b/bv*+ba/best",
-        "format_sort": ["hasaud", "abr", "res:720"],
+        "format": "best*[acodec!=none]/bestaudio/best",
+        "format_sort": ["hasaud", "abr", "res:720", "filesize"],
         "outtmpl": output_template,
         "noplaylist": True,
         "postprocessors": [
