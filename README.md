@@ -35,6 +35,12 @@ Chrome 쿠키 오류가 날 때:
 2. 또는 YouTube 쿠키를 Netscape 형식의 `cookies.txt`로 내보내고 앱에 업로드합니다.
 3. 앱은 브라우저 프로필을 가진 동일한 Windows 사용자 세션에서 실행해야 합니다.
 
+`Requested format is not available` 오류가 날 때:
+
+1. Firefox 쿠키 또는 `cookies.txt`로 다시 시도합니다.
+2. 특정 영상에서만 실패하면 영상 자체가 사용 가능한 포맷을 제한했을 수 있으므로 다른 영상으로 테스트합니다.
+3. 앱은 가능한 오디오/비디오 포맷을 MP3로 변환하도록 fallback을 사용합니다.
+
 공개 서비스로 운영할 때는 YouTube URL 대신 사용자가 직접 권리를 가진 오디오 파일을 업로드하게 하는 방식이 더 안정적입니다.
 
 ## CLI 실행

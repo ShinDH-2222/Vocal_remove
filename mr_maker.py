@@ -36,7 +36,8 @@ def download_audio(
     _ensure_dirs()
     output_template = str(DOWNLOAD_DIR / "%(title).180B [%(id)s].%(ext)s")
     options = {
-        "format": "bestaudio/best",
+        "format": "ba/b/bv*+ba/best",
+        "format_sort": ["hasaud", "abr", "res:720"],
         "outtmpl": output_template,
         "noplaylist": True,
         "postprocessors": [
@@ -56,8 +57,12 @@ def download_audio(
 
     with YoutubeDL(options) as ydl:
         info = ydl.extract_info(url, download=True)
-        prepared = Path(ydl.prepare_filename(info))
-        audio_path = prepared.with_suffix(".mp3")
+        requested_downloads = info.get("requested_downloads") or []
+        if requested_downloads:
+            audio_path = Path(requested_downloads[0]["filepath"]).with_suffix(".mp3")
+        else:
+            prepared = Path(ydl.prepare_filename(info))
+            audio_path = prepared.with_suffix(".mp3")
 
     if not audio_path.exists():
         raise FileNotFoundError(f"Downloaded audio was not found: {audio_path}")

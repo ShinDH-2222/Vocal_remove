@@ -47,6 +47,14 @@ def friendly_error(exc: Exception, details: str) -> str:
             f"Original error: {message}"
         )
 
+    if "requested format is not available" in lower_details:
+        return (
+            "Failed: YouTube did not provide a downloadable audio/video format for this request.\n\n"
+            "Try again with Firefox cookies or an exported cookies.txt file. "
+            "If only this video fails, test a different YouTube video because some videos restrict available formats.\n\n"
+            f"Original error: {message}"
+        )
+
     return f"Failed: {message}\n\n{details}"
 
 
