@@ -28,7 +28,11 @@ def _ensure_dirs() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
 
 
-def download_audio(url: str, cookies_file: str | None = None) -> tuple[str, Path]:
+def download_audio(
+    url: str,
+    cookies_file: str | None = None,
+    cookies_browser: str | None = None,
+) -> tuple[str, Path]:
     _ensure_dirs()
     output_template = str(DOWNLOAD_DIR / "%(title).180B [%(id)s].%(ext)s")
     options = {
@@ -38,8 +42,8 @@ def download_audio(url: str, cookies_file: str | None = None) -> tuple[str, Path
         "postprocessors": [
             {
                 "key": "FFmpegExtractAudio",
-                "preferredcodec": "wav",
-                "preferredquality": "0",
+                "preferredcodec": "mp3",
+                "preferredquality": "192",
             }
         ],
         "quiet": False,
@@ -47,16 +51,18 @@ def download_audio(url: str, cookies_file: str | None = None) -> tuple[str, Path
     }
     if cookies_file:
         options["cookiefile"] = cookies_file
+    if cookies_browser:
+        options["cookiesfrombrowser"] = (cookies_browser,)
 
     with YoutubeDL(options) as ydl:
         info = ydl.extract_info(url, download=True)
         prepared = Path(ydl.prepare_filename(info))
-        wav_path = prepared.with_suffix(".wav")
+        audio_path = prepared.with_suffix(".mp3")
 
-    if not wav_path.exists():
-        raise FileNotFoundError(f"Downloaded audio was not found: {wav_path}")
+    if not audio_path.exists():
+        raise FileNotFoundError(f"Downloaded audio was not found: {audio_path}")
 
-    return info.get("title", wav_path.stem), wav_path
+    return info.get("title", audio_path.stem), audio_path
 
 
 def separate_vocals(audio_path: Path, model: str = "htdemucs") -> Path:
@@ -100,12 +106,17 @@ def make_mr(
     url: str | None = None,
     model: str = "htdemucs",
     cookies_file: str | None = None,
+    cookies_browser: str | None = None,
     upload_path: str | None = None,
 ) -> MrResult:
     if upload_path:
         title, audio_path = prepare_uploaded_audio(upload_path)
     elif url:
-        title, audio_path = download_audio(url, cookies_file=cookies_file)
+        title, audio_path = download_audio(
+            url,
+            cookies_file=cookies_file,
+            cookies_browser=cookies_browser,
+        )
     else:
         raise ValueError("Provide a YouTube URL or upload an audio file.")
 
@@ -117,11 +128,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Create MR/instrumental audio from a YouTube URL.")
     parser.add_argument("url", nargs="?", help="YouTube video URL")
     parser.add_argument("--cookies", help="Path to a Netscape cookies.txt file for yt-dlp")
+    parser.add_argument(
+        "--cookies-from-browser",
+        choices=["chrome", "edge", "firefox", "brave", "vivaldi", "whale"],
+        help="Read YouTube cookies from a local browser profile",
+    )
     parser.add_argument("--input", help="Local audio file to process instead of a YouTube URL")
     parser.add_argument("--model", default="htdemucs", help="Demucs model name")
     args = parser.parse_args()
 
-    result = make_mr(args.url, model=args.model, cookies_file=args.cookies, upload_path=args.input)
+    result = make_mr(
+        args.url,
+        model=args.model,
+        cookies_file=args.cookies,
+        cookies_browser=args.cookies_from_browser,
+        upload_path=args.input,
+    )
     print(f"Title: {result.title}")
     print(f"Source audio: {result.source_audio}")
     print(f"MR file: {result.instrumental}")

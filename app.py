@@ -19,9 +19,11 @@ def create_mr(
     url: str,
     audio_file: str | None,
     cookies_file: str | None,
+    cookies_browser: str,
     model: str,
 ) -> tuple[str, str | None]:
     url = (url or "").strip()
+    browser = None if cookies_browser == "None" else cookies_browser
 
     if not url and not audio_file:
         return "Enter a YouTube URL or upload an audio file.", None
@@ -31,6 +33,7 @@ def create_mr(
             url=url or None,
             upload_path=audio_file,
             cookies_file=cookies_file,
+            cookies_browser=browser,
             model=model,
         )
         message = (
@@ -47,7 +50,7 @@ def create_mr(
 with gr.Blocks(title="Vocal MR Maker") as demo:
     gr.Markdown("# Vocal MR Maker")
     gr.Markdown(
-        "Create an instrumental/MR track by removing vocals from a YouTube URL "
+        "Create an instrumental/MR track by extracting MP3 audio from a YouTube URL "
         "or an uploaded audio file. Use only content you have the right to process."
     )
 
@@ -65,6 +68,11 @@ with gr.Blocks(title="Vocal MR Maker") as demo:
         file_types=[".txt"],
         type="filepath",
     )
+    browser_input = gr.Dropdown(
+        label="Use cookies from local browser",
+        choices=["None", "chrome", "edge", "firefox", "brave", "vivaldi", "whale"],
+        value="None",
+    )
     model_input = gr.Dropdown(
         label="Demucs model",
         choices=["mdx_extra_q", "htdemucs", "htdemucs_ft"],
@@ -77,7 +85,7 @@ with gr.Blocks(title="Vocal MR Maker") as demo:
 
     run_button.click(
         fn=create_mr,
-        inputs=[url_input, audio_input, cookies_input, model_input],
+        inputs=[url_input, audio_input, cookies_input, browser_input, model_input],
         outputs=[status_output, audio_output],
     )
 
