@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+downloads/
+outputs/
+separated/
+*.mp3
+*.wav
+*.m4a
+*.webm
