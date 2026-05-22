@@ -22,6 +22,13 @@ python app.py
 YouTube에서 봇 확인 오류가 나면 앱의 `Use cookies from local browser`에서 현재 YouTube에 로그인된 브라우저를 선택하세요.
 그래도 실패하면 브라우저 쿠키를 `cookies.txt`로 내보낸 뒤 앱의 `Optional YouTube cookies.txt`에 업로드하세요.
 
+Chrome 쿠키 오류가 날 때:
+
+1. Chrome 창을 모두 닫습니다.
+2. 작업 관리자에서 남아 있는 `chrome.exe`가 있으면 종료합니다.
+3. 다시 실행합니다.
+4. 그래도 실패하면 Edge/Firefox로 YouTube에 로그인한 뒤 해당 브라우저를 선택하거나, `cookies.txt`를 직접 업로드합니다.
+
 공개 서비스로 운영할 때는 YouTube URL 대신 사용자가 직접 권리를 가진 오디오 파일을 업로드하게 하는 방식이 더 안정적입니다.
 
 ## CLI 실행

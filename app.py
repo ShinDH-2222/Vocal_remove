@@ -15,6 +15,31 @@ def clean_error(text: str) -> str:
     return ANSI_ESCAPE.sub("", text)
 
 
+def friendly_error(exc: Exception, details: str) -> str:
+    message = clean_error(str(exc))
+    lower_details = details.lower()
+
+    if "could not copy chrome cookie database" in lower_details:
+        return (
+            "Failed: Chrome cookies could not be read.\n\n"
+            "Try one of these:\n"
+            "1. Close every Chrome window, including background Chrome processes, then run again.\n"
+            "2. Select edge or firefox if you are logged in to YouTube there.\n"
+            "3. Export YouTube cookies as cookies.txt and upload that file instead.\n\n"
+            f"Original error: {message}"
+        )
+
+    if "sign in to confirm" in lower_details or "not a bot" in lower_details:
+        return (
+            "Failed: YouTube is asking for sign-in or bot verification.\n\n"
+            "Use cookies from a browser where YouTube is already logged in, "
+            "or upload a valid cookies.txt file.\n\n"
+            f"Original error: {message}"
+        )
+
+    return f"Failed: {message}\n\n{details}"
+
+
 def create_mr(
     url: str,
     audio_file: str | None,
@@ -44,7 +69,7 @@ def create_mr(
         return message, str(result.instrumental)
     except Exception as exc:
         details = clean_error(traceback.format_exc())
-        return f"Failed: {clean_error(str(exc))}\n\n{details}", None
+        return friendly_error(exc, details), None
 
 
 with gr.Blocks(title="Vocal MR Maker") as demo:
@@ -52,6 +77,9 @@ with gr.Blocks(title="Vocal MR Maker") as demo:
     gr.Markdown(
         "Create an instrumental/MR track by extracting MP3 audio from a YouTube URL "
         "or an uploaded audio file. Use only content you have the right to process."
+    )
+    gr.Markdown(
+        "If YouTube blocks the request, close the selected browser completely or upload cookies.txt."
     )
 
     url_input = gr.Textbox(
