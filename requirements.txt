@@ -1,3 +1,4 @@
 yt-dlp[default]>=2026.3.17
 demucs>=4.0.1
 gradio>=5.0.0
+soundfile>=0.13.1

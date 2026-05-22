@@ -7,6 +7,7 @@ Create an instrumental/MR track by extracting audio from a YouTube URL or an upl
 - Python 3.10+
 - FFmpeg
 - Deno, required by recent yt-dlp YouTube challenge solving
+- SoundFile, used by torchaudio/Demucs to save separated WAV files
 
 Install Python dependencies:
 
@@ -93,6 +94,14 @@ Update yt-dlp, install `yt-dlp[default]`, install Deno, reopen PowerShell, then 
 python -m pip install -U "yt-dlp[default]"
 deno --version
 yt-dlp --cookies cookies.txt --list-formats "https://www.youtube.com/watch?v=VIDEO_ID"
+```
+
+### Demucs cannot save vocals.wav or no_vocals.wav
+
+Install SoundFile, then retry:
+
+```powershell
+python -m pip install -U soundfile
 ```
 
 ## Safety
