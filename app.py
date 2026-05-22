@@ -29,6 +29,16 @@ def friendly_error(exc: Exception, details: str) -> str:
             f"Original error: {message}"
         )
 
+    if "failed to decrypt with dpapi" in lower_details:
+        return (
+            "Failed: Browser cookies could not be decrypted by Windows DPAPI.\n\n"
+            "This often happens with Chrome/Edge cookies on Windows. Try one of these:\n"
+            "1. Log in to YouTube with Firefox, then select firefox in this app.\n"
+            "2. Export YouTube cookies as cookies.txt and upload that file.\n"
+            "3. Run this app from the same normal Windows user session that owns the browser profile.\n\n"
+            f"Original error: {message}"
+        )
+
     if "sign in to confirm" in lower_details or "not a bot" in lower_details:
         return (
             "Failed: YouTube is asking for sign-in or bot verification.\n\n"
@@ -79,7 +89,7 @@ with gr.Blocks(title="Vocal MR Maker") as demo:
         "or an uploaded audio file. Use only content you have the right to process."
     )
     gr.Markdown(
-        "If YouTube blocks the request, close the selected browser completely or upload cookies.txt."
+        "If YouTube blocks the request, Firefox cookies or an exported cookies.txt file are usually the most reliable."
     )
 
     url_input = gr.Textbox(

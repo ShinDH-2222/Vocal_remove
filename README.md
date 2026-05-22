@@ -29,6 +29,12 @@ Chrome 쿠키 오류가 날 때:
 3. 다시 실행합니다.
 4. 그래도 실패하면 Edge/Firefox로 YouTube에 로그인한 뒤 해당 브라우저를 선택하거나, `cookies.txt`를 직접 업로드합니다.
 
+`Failed to decrypt with DPAPI` 오류가 날 때:
+
+1. Chrome/Edge 대신 Firefox에서 YouTube에 로그인한 뒤 앱에서 `firefox`를 선택합니다.
+2. 또는 YouTube 쿠키를 Netscape 형식의 `cookies.txt`로 내보내고 앱에 업로드합니다.
+3. 앱은 브라우저 프로필을 가진 동일한 Windows 사용자 세션에서 실행해야 합니다.
+
 공개 서비스로 운영할 때는 YouTube URL 대신 사용자가 직접 권리를 가진 오디오 파일을 업로드하게 하는 방식이 더 안정적입니다.
 
 ## CLI 실행
