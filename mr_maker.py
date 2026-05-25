@@ -13,6 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent
 DOWNLOAD_DIR = BASE_DIR / "downloads"
 SEPARATED_DIR = BASE_DIR / "separated"
 OUTPUT_DIR = BASE_DIR / "outputs"
+DEFAULT_COOKIES_FILE = BASE_DIR / "cookies.txt"
+DEFAULT_MODEL = "htdemucs"
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,12 @@ def _ensure_dirs() -> None:
     DOWNLOAD_DIR.mkdir(exist_ok=True)
     SEPARATED_DIR.mkdir(exist_ok=True)
     OUTPUT_DIR.mkdir(exist_ok=True)
+
+
+def get_default_cookies_file() -> str | None:
+    if DEFAULT_COOKIES_FILE.exists():
+        return str(DEFAULT_COOKIES_FILE)
+    return None
 
 
 def download_audio(
@@ -70,7 +78,7 @@ def download_audio(
     return info.get("title", audio_path.stem), audio_path
 
 
-def separate_vocals(audio_path: Path, model: str = "htdemucs") -> Path:
+def separate_vocals(audio_path: Path, model: str = DEFAULT_MODEL) -> Path:
     _ensure_dirs()
     command = [
         "python",
@@ -109,7 +117,7 @@ def prepare_uploaded_audio(upload_path: str) -> tuple[str, Path]:
 
 def make_mr(
     url: str | None = None,
-    model: str = "htdemucs",
+    model: str = DEFAULT_MODEL,
     cookies_file: str | None = None,
     cookies_browser: str | None = None,
     upload_path: str | None = None,
@@ -117,6 +125,7 @@ def make_mr(
     if upload_path:
         title, audio_path = prepare_uploaded_audio(upload_path)
     elif url:
+        cookies_file = cookies_file or get_default_cookies_file()
         title, audio_path = download_audio(
             url,
             cookies_file=cookies_file,
@@ -139,7 +148,7 @@ def main() -> None:
         help="Read YouTube cookies from a local browser profile",
     )
     parser.add_argument("--input", help="Local audio file to process instead of a YouTube URL")
-    parser.add_argument("--model", default="htdemucs", help="Demucs model name")
+    parser.add_argument("--model", default=DEFAULT_MODEL, help="Demucs model name")
     args = parser.parse_args()
 
     result = make_mr(

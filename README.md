@@ -39,12 +39,19 @@ python app.py
 
 Open the local URL shown in the terminal.
 
-If YouTube blocks the request:
+The public UI is intentionally simple:
 
-1. Log in to YouTube in Firefox.
-2. Close and reopen PowerShell after installing Deno.
-3. Export Firefox cookies to `cookies.txt`, or select `firefox` in the app.
-4. If browser cookie reading fails, upload `cookies.txt` in the app.
+1. Paste a YouTube URL.
+2. Click the create button.
+3. Download or preview the generated MR file.
+
+The app automatically uses `cookies.txt` from the project folder when it exists:
+
+```text
+D:\PythonD\Vocal_Remove\cookies.txt
+```
+
+The Demucs model is fixed to `htdemucs` for normal users.
 
 ## CLI Usage
 
