@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -81,7 +82,7 @@ def download_audio(
 def separate_vocals(audio_path: Path, model: str = DEFAULT_MODEL) -> Path:
     _ensure_dirs()
     command = [
-        "python",
+        sys.executable,
         "-m",
         "demucs",
         "--two-stems",

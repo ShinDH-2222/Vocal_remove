@@ -11,3 +11,4 @@ separated/
 *.wav
 *.m4a
 *.webm
+.DS_Store

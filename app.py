@@ -91,4 +91,4 @@ with gr.Blocks(title="Vocal MR Maker") as demo:
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.queue(max_size=10).launch()
